@@ -11,6 +11,12 @@ async function registerUser(req, res) {
         .status(400)
         .json({ message: "please give all the required info", body });
     }
+    const result = await User.findOne({ username: body.username });
+    if (result) {
+      return res
+        .status(403)
+        .json({ message: `username "${req.username}" is taken`, user });
+    }
     const user = await User.findOne({ email: body.email });
     if (user) {
       return res.status(409).json({ message: "user already exist", user });
