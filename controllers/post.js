@@ -1,5 +1,13 @@
 const Post = require("../models/post");
-const User = require("../models/user");
+
+async function getPost(req, res) {
+  try {
+    const result = await Post.find();
+    res.json({ result });
+  } catch (error) {
+    res.json({ error: error.message });
+  }
+}
 
 async function createPost(req, res) {
   try {
@@ -51,5 +59,37 @@ async function deletePost(req, res) {
     res.json({ error: error.message });
   }
 }
+async function like(req, res) {
+  try {
+    const { _id } = req.user;
+    if (!_id) return res.status(401).message("login first");
+    const post = await Post.findOne({ _id: req.params.postId });
+    if (!post) return res.json({ message: "cant react!!" });
 
-module.exports = { createPost, updatePost, deletePost };
+    const result = await Post.updateOne(
+      { _id: req.params.postId },
+      { $addToSet: { likes: _id } }
+    );
+    res.status(200).json({ result });
+  } catch (error) {
+    res.json({ error: error.message });
+  }
+}
+async function unlike(req, res) {
+  try {
+    const { _id } = req.user;
+    if (!_id) return res.status(401).message("login first");
+    const post = await Post.findOne({ _id: req.params.postId });
+    if (!post) return res.json({ message: "cant react!!" });
+
+    const result = await Post.updateOne(
+      { _id: req.params.postId },
+      { $pull: { likes: _id } }
+    );
+    res.status(200).json({ result });
+  } catch (error) {
+    res.json({ error: error.message });
+  }
+}
+
+module.exports = { getPost, createPost, updatePost, deletePost, like, unlike };
