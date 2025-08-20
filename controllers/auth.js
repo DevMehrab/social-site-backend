@@ -15,7 +15,7 @@ async function registerUser(req, res) {
     if (result) {
       return res
         .status(403)
-        .json({ message: `username "${req.username}" is taken`, user });
+        .json({ message: `username "${req.username}" is taken` });
     }
     const user = await User.findOne({ email: body.email });
     if (user) {
