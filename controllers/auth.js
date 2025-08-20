@@ -9,7 +9,7 @@ async function registerUser(req, res) {
     if (!body) {
       return res
         .status(400)
-        .json({ message: "please give all the required info" });
+        .json({ message: "please give all the required info", body });
     }
     const user = await User.findOne({ email: body.email });
     if (user) {
